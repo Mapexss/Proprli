@@ -1,0 +1,77 @@
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./.docker/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 2s
+    networks:
+      - app_network
+
+  app:
+    image: php:8.2
+    container_name: app
+    restart: unless-stopped
+    working_dir: /var/www/html/app
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /var/www/html/app
+          ignore: ['vendor', '.git', '.env', 'composer.json', 'composer.lock', 'package.json', 'package-lock.json']
+        - action: rebuild
+          path: composer.json
+    healthcheck:
+      test: ["CMD", "pgrep", "php-fpm"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    depends_on:
+      - postgres
+      - nginx
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/var/www/html/app
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./.docker/nginx/default.conf
+          target: /etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html/nginx
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  laravel_data:
