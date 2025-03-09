@@ -13,10 +13,10 @@ return new class () extends Migration {
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255)->nullable(false);
-            $table->string('description')->nullable(false);
-            $table->enum('status', array_column(TaskStatusEnum::cases(), 'value'))->nullable(false)->default(TaskStatusEnum::OPEN->value);
-            $table->foreignId('building_id')->nullable(false)->constrained('buildings')->cascadeOnDelete();
+            $table->string('name', 255)->nullable(false)->index();
+            $table->string('description', 255)->nullable(false);
+            $table->enum('status', array_column(TaskStatusEnum::cases(), 'value'))->nullable(false)->default(TaskStatusEnum::OPEN->value)->index();
+            $table->foreignId('building_id')->nullable(false)->constrained('buildings')->cascadeOnDelete()->index();
             $table->foreignId('assigned_user_id')->nullable(false)->constrained('users')->cascadeOnDelete();
             $table->foreignId('creator_user_id')->nullable(false)->constrained('users')->cascadeOnDelete();
             $table->timestamps();
