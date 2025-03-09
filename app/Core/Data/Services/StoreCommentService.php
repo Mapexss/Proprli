@@ -45,7 +45,7 @@ class StoreCommentService implements IStoreCommentService
         }
 
         $taskThatWillBeCommented = $this->taskRepository->getById($payload['task_id']);
-        
+
         if (!$taskThatWillBeCommented) {
             throw new TaskNotFoundException();
         }

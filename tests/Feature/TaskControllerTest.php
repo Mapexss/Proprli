@@ -29,7 +29,7 @@ class TaskControllerTest extends TestCase
 
     /**
      * Get task payload for team
-     * 
+     *
      * @param Team $team
      * @param array<string, string|int> $overrides
      * @return array<string, string|int>
@@ -48,11 +48,11 @@ class TaskControllerTest extends TestCase
 
     /**
      * Test should fetch tasks
-     * 
+     *
      * @return void
      */
     public function test_should_fetch_tasks(): void
-    {        
+    {
         $team = Team::factory()->has(User::factory()->count(2), 'members')->create();
         $creator = $team->members->first();
         $assignee = $team->members->last();
@@ -111,7 +111,7 @@ class TaskControllerTest extends TestCase
 
     /**
      * Test should store a new task
-     * 
+     *
      * @return void
      */
     public function test_should_store_a_new_task(): void
@@ -134,7 +134,7 @@ class TaskControllerTest extends TestCase
 
     /**
      * Test should get 422 after trying to store a task with an unknown creator
-     * 
+     *
      * @return void
      */
     public function test_should_store_task_with_unknown_creator_returns_validation_error(): void
@@ -150,14 +150,14 @@ class TaskControllerTest extends TestCase
 
     /**
      * Test should get 422 after trying to store a task with an unknown assign
-     * 
+     *
      * @return void
      */
     public function test_should_get_422_after_trying_to_store_a_task_with_an_unknown_assign(): void
     {
         $team = Team::factory()->has(User::factory()->count(2), 'members')->create();
         $payload = $this->getTaskPayloadForTeam($team, ['assigned_user_id' => 9999]);
-        
+
         $response = $this->postJson(route('tasks.store', $this->building->id), $payload);
 
         $response->assertUnprocessable();
@@ -166,7 +166,7 @@ class TaskControllerTest extends TestCase
 
     /**
      * Test should get 422 after trying to store a task with different building
-     * 
+     *
      * @return void
      */
     public function test_should_get_401_after_trying_to_store_a_task_with_different_team_members(): void

@@ -33,7 +33,7 @@ class Task extends Model
     use HasFactory;
 
     protected $table = 'tasks';
-    
+
     /**
      * The attributes that are mass assignable.
      *

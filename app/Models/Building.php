@@ -24,7 +24,7 @@ class Building extends Model
     use HasFactory;
 
     protected $table = 'buildings';
-    
+
     /**
      * The attributes that are mass assignable.
      *

@@ -22,9 +22,9 @@ use Illuminate\Support\Carbon;
 class Team extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'teams';
-    
+
     /**
      * The attributes that are mass assignable.
      *

@@ -24,7 +24,7 @@ class CommentControllerTest extends TestCase
 
     /**
      * Set up comment test cases
-     * 
+     *
      * @return void
      */
     protected function setUp(): void
@@ -32,10 +32,10 @@ class CommentControllerTest extends TestCase
         parent::setUp();
 
         $team = Team::factory()->has(User::factory()->count(2), 'members')->create();
-        
+
         $this->building = Building::factory()->create();
         $this->allTasksStatus = TaskStatusEnum::allCases();
-        
+
         $this->creatorUser = $team->members->first();
         $this->assignedUser = $team->members->last();
 
@@ -54,7 +54,7 @@ class CommentControllerTest extends TestCase
 
     /**
      * Get comment payload
-     * 
+     *
      * @param array<string, string|int> $overrides
      * @return array<string, string|int>
      */
@@ -68,13 +68,13 @@ class CommentControllerTest extends TestCase
 
     /**
      * Test to store a new comment
-     * 
+     *
      * @return void
      */
     public function test_should_store_a_new_comment(): void
     {
         $response = $this->postJson(route('comments.store', $this->task->id), $this->getCommentPayload());
-        
+
         $response->assertCreated();
 
         $this->assertDatabaseCount('comments', 1);
@@ -82,7 +82,7 @@ class CommentControllerTest extends TestCase
 
     /**
      * Test to get 422 after trying to store a comment with an unknown creator
-     * 
+     *
      * @return void
      */
     public function test_should_store_comment_with_unknown_creator_returns_validation_error(): void
@@ -96,7 +96,7 @@ class CommentControllerTest extends TestCase
 
     /**
      * Test to get 422 after trying to store a comment in an unknown task
-     * 
+     *
      * @return void
      */
     public function test_should_store_comment_in_unknown_task_returns_not_found(): void
@@ -109,7 +109,7 @@ class CommentControllerTest extends TestCase
 
     /**
      * Test to get 401 after trying to store a comment with a different team member
-     * 
+     *
      * @return void
      */
     public function test_should_store_comment_with_different_team_member_returns_unauthorized(): void

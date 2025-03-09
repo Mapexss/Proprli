@@ -1,6 +1,7 @@
 #!/bin/bash
 
-docker compose build nginx postgres app --up -d
+composer install
+./vendor/bin/sail up -d
 
 set -e
 
@@ -10,7 +11,7 @@ docker exec -it app bash -c "composer run post-root-package-install"
 docker exec -it app bash -c "php artisan key:generate --force"
 docker exec -it app bash -c "php artisan migrate:fresh --force"
 
-#docker exec -it app bash -c "php artisan config:cache"
-#docker exec -it app bash -c "php artisan event:cache"
-#docker exec -it app bash -c "php artisan route:cache"
-#docker exec -it app bash -c "php artisan view:cache"
+docker exec -it app bash -c "php artisan config:cache"
+docker exec -it app bash -c "php artisan event:cache"
+docker exec -it app bash -c "php artisan route:cache"
+docker exec -it app bash -c "php artisan view:cache"

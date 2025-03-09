@@ -9,7 +9,6 @@ use App\Core\Domain\Builders\TaskEntityBuilder;
 use App\Core\Domain\Exceptions\AssignedUserNotFoundException;
 use App\Core\Domain\Exceptions\CreatorUserNotFoundException;
 use App\Core\Domain\Exceptions\UnauthorizedAttachedTeamException;
-use App\Models\User;
 
 class StoreTaskService implements IStoreTaskService
 {
