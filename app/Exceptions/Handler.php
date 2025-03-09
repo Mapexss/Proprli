@@ -2,7 +2,15 @@
 
 namespace App\Exceptions;
 
+use App\Core\Domain\Exceptions\AssignedUserNotFoundException;
+use App\Core\Domain\Exceptions\CreatorUserNotFoundException;
+use App\Core\Domain\Exceptions\InvalidTaskStatusException;
+use App\Core\Domain\Exceptions\TaskNotFoundException;
+use App\Core\Domain\Exceptions\UnauthorizedAttachedTeamException;
+use App\Core\Domain\Exceptions\UnauthorizedToCommentException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -44,5 +52,45 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \Throwable $e
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof ModelNotFoundException) {
+            $model = class_basename($e->getModel());
+
+            return response()->json([
+                'error' => 'Resource not found',
+                'message' => "The requested $model was not found with provided params",
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($e instanceof InvalidTaskStatusException) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (
+            $e instanceof AssignedUserNotFoundException ||
+            $e instanceof CreatorUserNotFoundException ||
+            $e instanceof TaskNotFoundException
+        ) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        }
+
+        if (
+            $e instanceof UnauthorizedAttachedTeamException ||
+            $e instanceof UnauthorizedToCommentException
+        ) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_UNAUTHORIZED);
+        }
+
+        return parent::render($request, $e);
     }
 }
